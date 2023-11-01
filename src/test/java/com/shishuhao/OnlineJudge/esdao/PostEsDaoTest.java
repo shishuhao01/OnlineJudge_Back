@@ -17,9 +17,6 @@ import org.springframework.data.domain.Sort;
 
 /**
  * 帖子 ES 操作测试
- *
- * @author <a href="https://github.com/lishishuhao">程序员鱼皮</a>
- * @from <a href="https://shishuhao.icu">编程导航知识星球</a>
  */
 @SpringBootTest
 public class PostEsDaoTest {
