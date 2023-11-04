@@ -138,7 +138,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         List<String> orTagList = postQueryRequest.getOrTags();
         Long userId = postQueryRequest.getUserId();
         // es 起始页为 0
-        long current = postQueryRequest.getCurrent() - 1;
+        long current = postQueryRequest.getPageNum() - 1;
         long pageSize = postQueryRequest.getPageSize();
         String sortField = postQueryRequest.getSortField();
         String sortOrder = postQueryRequest.getSortOrder();

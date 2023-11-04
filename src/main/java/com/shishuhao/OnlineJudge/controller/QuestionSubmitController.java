@@ -66,7 +66,7 @@ public class QuestionSubmitController {
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<QuestionSubmitVO>> listQuestionVOByPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
                                                                      HttpServletRequest request) {
-        long pageNum= questionSubmitQueryRequest.getCurrent();
+        long pageNum= questionSubmitQueryRequest.getPageNum();
         long pageSize = questionSubmitQueryRequest.getPageSize();
 
         // 限制爬虫

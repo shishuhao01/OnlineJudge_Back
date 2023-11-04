@@ -12,7 +12,7 @@ public class PageRequest {
     /**
      * 当前页号
      */
-    private long current = 1;
+    private long pageNum = 1;
 
     /**
      * 页面大小

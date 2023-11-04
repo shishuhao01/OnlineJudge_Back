@@ -74,11 +74,11 @@ public class PostFavourController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User loginUser = userService.getLoginUser(request);
-        long current = postQueryRequest.getCurrent();
+        long pageNum = postQueryRequest.getPageNum();
         long size = postQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Post> postPage = postFavourService.listFavourPostByPage(new Page<>(current, size),
+        Page<Post> postPage = postFavourService.listFavourPostByPage(new Page<>(pageNum, size),
                 postService.getQueryWrapper(postQueryRequest), loginUser.getId());
         return ResultUtils.success(postService.getPostVOPage(postPage, request));
     }
@@ -95,12 +95,12 @@ public class PostFavourController {
         if (postFavourQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        long current = postFavourQueryRequest.getCurrent();
+        long pageNum = postFavourQueryRequest.getPageNum();
         long size = postFavourQueryRequest.getPageSize();
         Long userId = postFavourQueryRequest.getUserId();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20 || userId == null, ErrorCode.PARAMS_ERROR);
-        Page<Post> postPage = postFavourService.listFavourPostByPage(new Page<>(current, size),
+        Page<Post> postPage = postFavourService.listFavourPostByPage(new Page<>(pageNum, size),
                 postService.getQueryWrapper(postFavourQueryRequest.getPostQueryRequest()), userId);
         return ResultUtils.success(postService.getPostVOPage(postPage, request));
     }

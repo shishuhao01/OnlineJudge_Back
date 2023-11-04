@@ -107,17 +107,20 @@ public class QuestionController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        //获取当前登录用户id
+        //id:问题id
         long id = deleteRequest.getId();
+
         User loginUser = userService.getLoginUser(request);
+
         if (loginUser == null) {
             throw new Exception(String.valueOf(ErrorCode.NOT_FOUND_ERROR));
         }
         // 判断是否存在
         Question oldQuestion = questionService.getById(id);
+
         ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
         // 仅管理员和题目创建者可删除
-        if (loginUser.getId() != id && !userService.isAdmin(request)) {
+        if (!loginUser.getId().equals(oldQuestion.getUserId())  && !userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         boolean b = questionService.removeById(id);
@@ -188,6 +191,29 @@ public class QuestionController {
     }
 
     /**
+     * 根据 id 获取
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/get")
+    public BaseResponse<Question> getQuestionById(long id , HttpServletRequest request) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Question question = questionService.getById(id);
+        if (question == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        if (!question.getUserId().equals(loginUser.getId()) && userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+
+        return ResultUtils.success(question);
+    }
+
+    /**
      * 分页获取列表（封装类）
      *
      * @param questionQueryRequest
@@ -198,7 +224,7 @@ public class QuestionController {
     public BaseResponse<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
             HttpServletRequest request) {
 
-        long pageNum= questionQueryRequest.getCurrent();
+        long pageNum= questionQueryRequest.getPageNum();
         long pageSize = questionQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(pageSize > 20, ErrorCode.PARAMS_ERROR);
@@ -226,7 +252,7 @@ public class QuestionController {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
-        long pageNum = questionQueryRequest.getCurrent();
+        long pageNum = questionQueryRequest.getPageNum();
         long pageSize = questionQueryRequest.getPageSize();
         Page<Question> page = new Page<>(pageNum,pageSize);
         QueryWrapper<Question> queryWrapper = questionService.getQueryWrapper(questionQueryRequest);
@@ -252,7 +278,7 @@ public class QuestionController {
         User loginUser = userService.getLoginUser(request);
         questionQueryRequest.setUserId(loginUser.getId());
 
-        long pageNum = questionQueryRequest.getCurrent();
+        long pageNum = questionQueryRequest.getPageNum();
         long pageSize = questionQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(pageSize > 20, ErrorCode.PARAMS_ERROR);

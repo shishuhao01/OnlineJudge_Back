@@ -244,9 +244,9 @@ public class UserController {
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
             HttpServletRequest request) {
-        long current = userQueryRequest.getCurrent();
+        long PageNum = userQueryRequest.getPageNum();
         long size = userQueryRequest.getPageSize();
-        Page<User> userPage = userService.page(new Page<>(current, size),
+        Page<User> userPage = userService.page(new Page<>(PageNum, size),
                 userService.getQueryWrapper(userQueryRequest));
         return ResultUtils.success(userPage);
     }
@@ -264,13 +264,13 @@ public class UserController {
         if (userQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        long current = userQueryRequest.getCurrent();
+        long PageNum = userQueryRequest.getPageNum();
         long size = userQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<User> userPage = userService.page(new Page<>(current, size),
+        Page<User> userPage = userService.page(new Page<>(PageNum, size),
                 userService.getQueryWrapper(userQueryRequest));
-        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
+        Page<UserVO> userVOPage = new Page<>(PageNum, size, userPage.getTotal());
         List<UserVO> userVO = userService.getUserVO(userPage.getRecords());
         userVOPage.setRecords(userVO);
         return ResultUtils.success(userVOPage);
