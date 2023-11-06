@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,7 +47,7 @@ public class QuestionSubmitController {
      */
     @PostMapping("/")
     public BaseResponse<Long> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
-            HttpServletRequest request) {
+                                               HttpServletRequest request) {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -58,28 +59,61 @@ public class QuestionSubmitController {
 
 
     /**
-     *
      * @param questionSubmitQueryRequest
      * @param request
      * @return 分页查询题目提交记录封装类
      */
-    @PostMapping("/list/page/vo")
-    public BaseResponse<Page<QuestionSubmitVO>> listQuestionVOByPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
-                                                                     HttpServletRequest request) {
-        long pageNum= questionSubmitQueryRequest.getPageNum();
+    @PostMapping("/list/page/admin/vo")
+    public BaseResponse<Page<QuestionSubmitVO>> listQuestionVOByPageAdmin(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
+                                                                          HttpServletRequest request) {
+        long pageNum = questionSubmitQueryRequest.getPageNum();
         long pageSize = questionSubmitQueryRequest.getPageSize();
 
         // 限制爬虫
         ThrowUtils.throwIf(pageSize > 20, ErrorCode.PARAMS_ERROR);
 
         //分页查询
-        Page<QuestionSubmit> page = new Page(pageNum,pageSize);
-        QueryWrapper<QuestionSubmit> queryWrapper =  questionSubmitService.getQueryWrapper(questionSubmitQueryRequest);
-        questionSubmitService.page(page,queryWrapper);
+        Page<QuestionSubmit> page = new Page(pageNum, pageSize);
+        QueryWrapper<QuestionSubmit> queryWrapper = questionSubmitService.getQueryWrapper(questionSubmitQueryRequest);
+        questionSubmitService.page(page, queryWrapper);
 
         //从request中获取用户信息
         User loginUser = userService.getLoginUser(request);
-        return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(page,loginUser));
+        return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPageAdmin(page, loginUser));
+    }
+
+
+    /**
+     * @param questionSubmitQueryRequest
+     * @param request
+     * @return 分页查询题目提交记录封装类
+     */
+    @PostMapping("/list/page/user/vo")
+    public BaseResponse<Page<QuestionSubmitVO>> listQuestionVOByPageUser(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
+                                                                         HttpServletRequest request) {
+        long pageNum = questionSubmitQueryRequest.getPageNum();
+        long pageSize = questionSubmitQueryRequest.getPageSize();
+
+        // 限制爬虫
+        ThrowUtils.throwIf(pageSize > 20, ErrorCode.PARAMS_ERROR);
+
+        //分页查询
+        Page<QuestionSubmit> page = new Page(pageNum, pageSize);
+
+        //从request中获取用户信息
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        if (userService.isAdmin(loginUser)) {
+            return listQuestionVOByPageAdmin(questionSubmitQueryRequest, request);
+        }
+
+        QueryWrapper<QuestionSubmit> queryWrapper = questionSubmitService.getUserQueryWrapper(questionSubmitQueryRequest, loginUser.getId());
+        questionSubmitService.page(page, queryWrapper);
+
+
+        return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPageUser(page, loginUser));
     }
 
 }

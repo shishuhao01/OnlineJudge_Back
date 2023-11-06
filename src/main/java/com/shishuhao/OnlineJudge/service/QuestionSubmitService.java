@@ -30,6 +30,15 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
      */
     QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest QuestionQuerySubmitRequest);
 
+
+    /**
+     * 获取查询条件
+     *
+     * @param
+     * @return
+     */
+    QueryWrapper<QuestionSubmit> getUserQueryWrapper(QuestionSubmitQueryRequest QuestionQuerySubmitRequest, long id);
+
     /**
      * 获取题目提交封装
      *
@@ -46,7 +55,9 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
      * @param loginUser
      * @return
      */
-    Page<QuestionSubmitVO> getQuestionSubmitVOPage(Page<QuestionSubmit> QuestionSubmitPage, User loginUser);
+    Page<QuestionSubmitVO> getQuestionSubmitVOPageAdmin(Page<QuestionSubmit> QuestionSubmitPage, User loginUser);
+
+    Page<QuestionSubmitVO> getQuestionSubmitVOPageUser(Page<QuestionSubmit> QuestionSubmitPage, User loginUser);
 
 
 }
