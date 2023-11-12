@@ -50,16 +50,17 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
                 return judgeInfoResponse;
             }
         }
-        long JAVA_PROGRAM_TIME_COST = 10000L;
+//        long JAVA_PROGRAM_TIME_COST = 10000L;
+
         //题目限制的
         String judgeConfigStr = question.getJudgeConfig();
         JudgeConfig judgeConfig = JSONUtil.toBean(judgeConfigStr, JudgeConfig.class);
-        if (judgeConfig.getMemoryLimit() <= needMemory ) {
+        if (judgeConfig.getMemoryLimit() <= needMemory) {
             judgeInfoMessageEnum = JudgeInfoMessageEnum.MEMORY_LIMIT_EXCEEDED;
             judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
             return judgeInfoResponse;
         }
-        if (judgeConfig.getTimeLimit() <= needTime - JAVA_PROGRAM_TIME_COST) {
+        if (judgeConfig.getTimeLimit() <= needTime) {
             judgeInfoMessageEnum = JudgeInfoMessageEnum.TIME_LIMIT_EXCEEDED;
             judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
             return judgeInfoResponse;

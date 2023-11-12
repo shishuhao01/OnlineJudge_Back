@@ -22,4 +22,5 @@ public class JudgeInfo {
      */
     private Long time;
 
+
 }

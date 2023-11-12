@@ -52,6 +52,18 @@ public class JudgeServiceImpl implements JudgeService {
         if (!questionSubmit.getStatus().equals(QuestionSubmitStatusEnum.WAITING.getValue())) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "题目正在判题中");
         }
+        Integer submitNum = question.getSubmitNum();
+        Integer acceptedNum = question.getAcceptedNum();
+        acceptedNum += 1;
+        submitNum += 1;
+        question.setSubmitNum(submitNum);
+        boolean b1 = questionService.updateById(question);
+        if (!b1) {
+            System.out.println("题目提交数目修改失败");
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "系统数据库异常");
+        }
+
+
         QuestionSubmit questionSubmitUpdate = new QuestionSubmit();
         questionSubmitUpdate.setId(questionSubmitId);
         questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.RUNNING.getValue());
@@ -69,6 +81,7 @@ public class JudgeServiceImpl implements JudgeService {
         if (!b) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "题目状态更新失败");
         }
+
         //3.调用沙箱，获取到执行结果，
         CodeSandBox codeSandBox = CodeSandboxFactory.newInstance(type);
         codeSandBox = new CodeSandBoxProxy(codeSandBox);
@@ -76,8 +89,22 @@ public class JudgeServiceImpl implements JudgeService {
         ExecuteCodeRequest executeCodeRequest =
                 ExecuteCodeRequest.builder().code(code).language(language).inputList(inputList).build();
         //执行代码沙箱
-        //todo 还没有实际开发完成，假数据
         ExecuteCodeResponse executeCodeResponse = codeSandBox.executeCode(executeCodeRequest);
+        JudgeInfo judgeInfoRun = executeCodeResponse.getJudgeInfo();
+        if (judgeInfoRun.getMessage().equals("编译错误") || judgeInfoRun.getMessage().equals("危险操作") || judgeInfoRun.getMessage().equals("超时")) {
+            //修改数据库的结果
+            questionSubmitUpdate = new QuestionSubmit();
+            questionSubmitUpdate.setId(questionSubmitId);
+            //设置判题状态，这个时候判题完毕
+            questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
+            questionSubmitUpdate.setJudgeInfo(JSONUtil.toJsonStr(judgeInfoRun));
+            QuestionSubmit questionSubmit1 = questionSubmitService.getById(questionSubmitId);
+            b = questionSubmitService.updateById(questionSubmitUpdate);
+            if (!b) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "题目状态更新失败");
+            }
+            return questionSubmit1;
+        }
 
         List<String> outputList = executeCodeResponse.getOutputList();
         //判题后给到的信息
@@ -97,6 +124,13 @@ public class JudgeServiceImpl implements JudgeService {
         //设置判题状态，这个时候判题完毕
         questionSubmitUpdate.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
         questionSubmitUpdate.setJudgeInfo(JSONUtil.toJsonStr(judgeInfo1));
+        if (judgeInfo1.getMessage().equals("成功")) {
+            question.setAcceptedNum(acceptedNum);
+            boolean isSave = questionService.updateById(question);
+            if (!isSave) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "系统数据库修改通过数目失败");
+            }
+        }
         b = questionSubmitService.updateById(questionSubmitUpdate);
         if (!b) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "题目状态更新失败");

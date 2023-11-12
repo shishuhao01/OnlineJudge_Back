@@ -20,7 +20,7 @@ public class QuestionSubmitQueryRequest extends PageRequest implements Serializa
     private String language;
 
     /**
-     * 用户代码
+     * 题目判题状态
      */
     private Integer status;
 
