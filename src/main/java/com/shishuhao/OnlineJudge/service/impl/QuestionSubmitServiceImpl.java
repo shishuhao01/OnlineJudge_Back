@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 题目提交 服务实现类
@@ -96,9 +95,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
         Long questionSubmitId = questionSubmit.getId();
 
-        CompletableFuture.runAsync(() -> {
+//        CompletableFuture.runAsync(() -> {
             judgeService.doJudge(questionSubmitId);
-        });
+//        });
 
         return questionSubmitId;
     }

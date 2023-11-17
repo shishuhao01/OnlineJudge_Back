@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> implements QuestionService {
-    private final static Gson GSON = new Gson();
+
 
     @Resource
     private UserService userService;
@@ -135,6 +135,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         questionVO.setUserVo(userVO);
         return questionVO;
     }
+
+
+
+
 
     @Override
     //根据questionPage对象返回questionVo分页对象
