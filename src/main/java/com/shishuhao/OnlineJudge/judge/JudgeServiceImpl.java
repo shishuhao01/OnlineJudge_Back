@@ -91,7 +91,8 @@ public class JudgeServiceImpl implements JudgeService {
         //执行代码沙箱
         ExecuteCodeResponse executeCodeResponse = codeSandBox.executeCode(executeCodeRequest);
         JudgeInfo judgeInfoRun = executeCodeResponse.getJudgeInfo();
-        if (judgeInfoRun.getMessage().equals("编译错误") || judgeInfoRun.getMessage().equals("危险操作") || judgeInfoRun.getMessage().equals("超时")) {
+        if (judgeInfoRun.getMessage().equals("编译错误") || judgeInfoRun.getMessage().equals("危险操作")
+                || judgeInfoRun.getMessage().equals("超时") || judgeInfoRun.getMessage().equals("程序运行时异常")) {
             //修改数据库的结果
             questionSubmitUpdate = new QuestionSubmit();
             questionSubmitUpdate.setId(questionSubmitId);

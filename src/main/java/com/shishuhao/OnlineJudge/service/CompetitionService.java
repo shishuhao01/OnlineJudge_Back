@@ -20,4 +20,9 @@ public interface CompetitionService extends IService<Competition> {
       QueryWrapper<Competition> getCompetitionQueryWrapper (CompetitionQueryRequest competitionQueryRequest);
 
       Page<CompetitionVO> getCompetitionVOPage(Page<Competition> page);
+
+      CompetitionVO getCompetitionById(Competition competition);
+
+
+
 }

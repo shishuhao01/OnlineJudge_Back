@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ public class UserCompetitionRecord implements Serializable {
     /**
      * 用户比赛记录id
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -79,7 +79,7 @@ public class UserCompetitionRecord implements Serializable {
      * 比赛日期
      */
     @TableField("competitionTime")
-    private LocalDateTime competitionTime;
+    private LocalDate competitionTime;
 
     /**
      * 是否删除

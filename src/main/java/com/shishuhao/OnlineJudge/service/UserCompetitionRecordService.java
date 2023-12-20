@@ -13,4 +13,6 @@ import com.shishuhao.OnlineJudge.model.entity.UserCompetitionRecord;
  */
 public interface UserCompetitionRecordService extends IService<UserCompetitionRecord> {
 
+
+
 }

@@ -1,10 +1,12 @@
 package com.shishuhao.OnlineJudge.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -37,9 +39,16 @@ public class CompetitionVO implements Serializable {
     private String competitionContext;
 
     /**
+     * 比赛语言
+     */
+     private String languageType;
+
+    /**
      * 创建人信息
      */
     private UserVO userVO;
+
+
 
     /**
      * 题目集合
@@ -52,14 +61,22 @@ public class CompetitionVO implements Serializable {
     private Integer totalScore;
 
     /**
+     * 创建日期
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private LocalDate date;
+
+    /**
      * 开始时间
      */
-    private LocalDateTime startTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone = "GMT+8")
+    private LocalTime startTime;
 
     /**
      * 结束时间
      */
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone = "GMT+8")
+    private LocalTime endTime;
 
 
 

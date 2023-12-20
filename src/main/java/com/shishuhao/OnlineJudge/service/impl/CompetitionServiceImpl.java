@@ -12,6 +12,7 @@ import com.shishuhao.OnlineJudge.model.entity.Question;
 import com.shishuhao.OnlineJudge.model.entity.User;
 import com.shishuhao.OnlineJudge.model.vo.CompetitionVO;
 import com.shishuhao.OnlineJudge.model.vo.QuestionVO;
+import com.shishuhao.OnlineJudge.model.vo.UserVO;
 import com.shishuhao.OnlineJudge.service.CompetitionService;
 import com.shishuhao.OnlineJudge.service.QuestionService;
 import com.shishuhao.OnlineJudge.service.UserService;
@@ -101,6 +102,8 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
                 }
             }
             competitionVO.setQuestionVOList(questionVOList);
+            competitionVO.setDate(competition.getDate());
+            competitionVO.setLanguageType(competition.getLanguageType());
             competitionVO.setTotalScore(competition.getTotalScore());
             competitionVO.setStartTime(competition.getStartTime());
             competitionVO.setEndTime(competition.getEndTime());
@@ -112,5 +115,49 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
 
 
         return competitionVOPage;
+    }
+
+    @Override
+    public CompetitionVO getCompetitionById(Competition competition) {
+        CompetitionVO competitionVO = new CompetitionVO();
+        competitionVO.setId(competition.getId());
+        competitionVO.setCompetitionTitle(competition.getCompetitionTitle());
+        competitionVO.setCompetitionContext(competition.getCompetitionContext());
+        competitionVO.setLanguageType(competitionVO.getLanguageType());
+
+        competitionVO.setTotalScore(competition.getTotalScore());
+        competitionVO.setDate(competition.getDate());
+        competitionVO.setStartTime(competition.getStartTime());
+        competitionVO.setEndTime(competition.getEndTime());
+
+        //根据题目id先查询用户
+
+        Long adminId = competition.getAdminId();
+        User user = userService.getById(adminId);
+        UserVO userVo = userService.getUserVO(user);
+        competitionVO.setUserVO(userVo);
+
+        //查询所有题目信息
+        String question = competition.getQuestion();
+        // 去除方括号并按逗号分割字符串
+        String[] strArray = question.substring(1, question.length() - 1).split(", ");
+        // 将字符串数组转换为长整型数组
+        long[] longArray = new long[strArray.length];
+        for (int i = 0; i < strArray.length; i++) {
+            longArray[i] = Long.parseLong(strArray[i]);
+        }
+        // 将长整型数组转换为列表
+        List<Long> questionStr = Arrays.asList(ArrayUtils.toObject(longArray));
+        List<QuestionVO> questionVOList = new ArrayList<>();
+        for (Long questionId : questionStr) {
+            Question question3 = questionService.getById(Long.valueOf(questionId));
+            if (question3 != null) {
+                questionVOList.add(QuestionVO.objToVo(question3));
+            }
+        }
+        competitionVO.setQuestionVOList(questionVOList);
+
+
+        return competitionVO;
     }
 }

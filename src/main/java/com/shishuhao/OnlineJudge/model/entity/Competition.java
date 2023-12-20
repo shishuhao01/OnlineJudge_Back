@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * <p>
@@ -43,6 +43,13 @@ public class Competition  implements Serializable {
     @TableField("competitionContext")
     private String competitionContext;
 
+
+    /**
+     * 组别
+     */
+    @TableField("languageType")
+    private String languageType;
+
     /**
      * 创建人id
      */
@@ -63,19 +70,20 @@ public class Competition  implements Serializable {
     /**
      * 创建日期
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDate date;
 
     /**
      * 开始时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime startTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone = "GMT+8")
+    private LocalTime startTime;
 
     /**
      * 结束时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime endTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone = "GMT+8")
+    private LocalTime endTime;
 
     /**
      * 是否删除
