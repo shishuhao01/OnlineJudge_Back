@@ -1,5 +1,6 @@
 package com.shishuhao.OnlineJudge.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.shishuhao.OnlineJudge.mapper.UserCompetitionRecordMapper;
 import com.shishuhao.OnlineJudge.model.entity.UserCompetitionRecord;
@@ -17,4 +18,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserCompetitionRecordServiceImpl extends ServiceImpl<UserCompetitionRecordMapper, UserCompetitionRecord> implements UserCompetitionRecordService {
 
+    @Override
+    public QueryWrapper<UserCompetitionRecord> setCompetitionTimeWrapper(long competitionId, long userId) {
+        QueryWrapper<UserCompetitionRecord> userCompetitionRecordQueryWrapper = new QueryWrapper<>();
+        userCompetitionRecordQueryWrapper.eq("competitionId", competitionId);
+        userCompetitionRecordQueryWrapper.eq("userId", userId);
+        return userCompetitionRecordQueryWrapper;
+    }
 }

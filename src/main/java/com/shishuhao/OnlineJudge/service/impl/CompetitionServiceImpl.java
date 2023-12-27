@@ -45,23 +45,23 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
     private QuestionService questionService;
 
 
-    public QueryWrapper<Competition> getCompetitionQueryWrapper (CompetitionQueryRequest competitionQueryRequest) {
+    public QueryWrapper<Competition> getCompetitionQueryWrapper(CompetitionQueryRequest competitionQueryRequest) {
         QueryWrapper<Competition> queryWrapper = new QueryWrapper<>();
         if (competitionQueryRequest == null) {
             return queryWrapper;
         }
-
 
         Long competitionId = competitionQueryRequest.getCompetitionId();
         String competitionTitle = competitionQueryRequest.getCompetitionTitle();
         LocalDate startDate = competitionQueryRequest.getStartDate();
         LocalDate endDate = competitionQueryRequest.getEndDate();
         if (competitionId != null) {
-            queryWrapper.eq("id",competitionId);
+            queryWrapper.eq("id", competitionId);
         }
-        queryWrapper.like(StringUtils.isNotBlank(competitionTitle),"competitionTitle",competitionTitle);
-        queryWrapper.gt(ObjectUtil.isNotNull(startDate),"date",startDate);
-        queryWrapper.lt(ObjectUtil.isNotNull(endDate),"date",endDate);
+        queryWrapper.like(StringUtils.isNotBlank(competitionTitle), "competitionTitle", competitionTitle);
+        queryWrapper.gt(ObjectUtil.isNotNull(startDate), "date", startDate);
+        queryWrapper.lt(ObjectUtil.isNotNull(endDate), "date", endDate);
+        queryWrapper.orderByDesc("date");
         String sortField = competitionQueryRequest.getSortField();
         String sortOrder = competitionQueryRequest.getSortOrder();
 
@@ -73,7 +73,7 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
 
     @Override
     public Page<CompetitionVO> getCompetitionVOPage(Page<Competition> page) {
-        Page<CompetitionVO> competitionVOPage = new Page<>(page.getCurrent(),page.getSize(),page.getTotal());
+        Page<CompetitionVO> competitionVOPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
         List<Competition> competitionList = page.getRecords();
         List<CompetitionVO> competitionVOList = competitionList.stream().map(competition -> {
             CompetitionVO competitionVO = new CompetitionVO();
@@ -83,10 +83,12 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
 
             User admin = userService.getById(competition.getAdminId());
             competitionVO.setUserVO(userService.getUserVO(admin));
+
             //todo 优化
             String question = competition.getQuestion();
             // 去除方括号并按逗号分割字符串
-            String[] strArray = question.substring(1, question.length() - 1).split(", ");
+            String str = question.replace(" ", "");
+            String[] strArray = str.substring(1, str.length() - 1).split(",");
             // 将字符串数组转换为长整型数组
             long[] longArray = new long[strArray.length];
             for (int i = 0; i < strArray.length; i++) {
@@ -94,6 +96,7 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
             }
             // 将长整型数组转换为列表
             List<Long> questionStr = Arrays.asList(ArrayUtils.toObject(longArray));
+
             List<QuestionVO> questionVOList = new ArrayList<>();
             for (Long questionId : questionStr) {
                 Question question3 = questionService.getById(Long.valueOf(questionId));
@@ -101,19 +104,18 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
                     questionVOList.add(QuestionVO.objToVo(question3));
                 }
             }
+
+
             competitionVO.setQuestionVOList(questionVOList);
             competitionVO.setDate(competition.getDate());
             competitionVO.setLanguageType(competition.getLanguageType());
             competitionVO.setTotalScore(competition.getTotalScore());
             competitionVO.setStartTime(competition.getStartTime());
             competitionVO.setEndTime(competition.getEndTime());
+            competitionVO.setImgUrl(competition.getImgUrl());
             return competitionVO;
         }).collect(Collectors.toList());
         competitionVOPage.setRecords(competitionVOList);
-
-
-
-
         return competitionVOPage;
     }
 
@@ -140,7 +142,8 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
         //查询所有题目信息
         String question = competition.getQuestion();
         // 去除方括号并按逗号分割字符串
-        String[] strArray = question.substring(1, question.length() - 1).split(", ");
+        String str = question.replace(" ", "");
+        String[] strArray = str.substring(1, str.length() - 1).split(",");
         // 将字符串数组转换为长整型数组
         long[] longArray = new long[strArray.length];
         for (int i = 0; i < strArray.length; i++) {
@@ -156,6 +159,7 @@ public class CompetitionServiceImpl extends ServiceImpl<CompetitionMapper, Compe
             }
         }
         competitionVO.setQuestionVOList(questionVOList);
+        competitionVO.setImgUrl(competition.getImgUrl());
 
 
         return competitionVO;

@@ -96,7 +96,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         Long questionSubmitId = questionSubmit.getId();
 
 //        CompletableFuture.runAsync(() -> {
-            judgeService.doJudge(questionSubmitId);
+        judgeService.doJudge(questionSubmitId);
 //        });
 
         return questionSubmitId;

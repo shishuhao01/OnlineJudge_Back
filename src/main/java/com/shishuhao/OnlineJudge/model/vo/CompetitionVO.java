@@ -44,6 +44,11 @@ public class CompetitionVO implements Serializable {
      private String languageType;
 
     /**
+     * 比赛图片
+     */
+    private String imgUrl;
+
+    /**
      * 创建人信息
      */
     private UserVO userVO;

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -54,10 +55,14 @@ public class UserCompetitionRecord implements Serializable {
     private String questionAccepted;
 
     /**
-     * 用户比赛时长
+     * 用户比赛开始时间
      */
-    @TableField("totalTime")
-    private String totalTime;
+    private LocalDateTime startTime;
+
+    /**
+     * 用户比赛结束时间
+     */
+    private LocalDateTime endTime;
 
     /**
      * 用户的得分

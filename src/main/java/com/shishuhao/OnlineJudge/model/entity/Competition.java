@@ -21,7 +21,7 @@ import java.time.LocalTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Competition  implements Serializable {
+public class Competition implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -55,6 +55,13 @@ public class Competition  implements Serializable {
      */
     @TableField("adminId")
     private Long adminId;
+
+    /**
+     * 比赛图片
+     */
+    @TableField("imgUrl")
+    private String imgUrl;
+
 
     /**
      * 题目集合
