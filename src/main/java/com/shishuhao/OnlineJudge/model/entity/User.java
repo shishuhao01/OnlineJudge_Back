@@ -70,6 +70,11 @@ public class User implements Serializable {
     private Date updateTime;
 
     /**
+     * 人脸token
+     */
+     private String faceToken;
+
+    /**
      * 是否删除
      */
     @TableLogic

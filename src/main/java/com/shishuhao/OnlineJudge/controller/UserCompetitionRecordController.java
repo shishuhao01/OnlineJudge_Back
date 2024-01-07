@@ -120,6 +120,16 @@ public class UserCompetitionRecordController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "比赛不存在");
         }
 
+        //项目bug问题，就是用户可以报名两次
+        QueryWrapper<UserCompetitionRecord> userCompetitionRecordQueryWrapper =
+                userCompetitionRecordService.setCompetitionTimeWrapper(competitionId, userId);
+
+        UserCompetitionRecord one = userCompetitionRecordService.getOne(userCompetitionRecordQueryWrapper);
+        if (one != null) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "你已经报名过");
+        }
+
+
         UserCompetitionRecord userCompetitionRecord = new UserCompetitionRecord();
         userCompetitionRecord.setScore(0);
         userCompetitionRecord.setQuestionAccepted("");
@@ -151,7 +161,8 @@ public class UserCompetitionRecordController {
         }
 
         //判断用户是否报名比赛
-        QueryWrapper<UserCompetitionRecord> userCompetitionRecordQueryWrapper = userCompetitionRecordService.setCompetitionTimeWrapper(competitionId, userId);
+        QueryWrapper<UserCompetitionRecord> userCompetitionRecordQueryWrapper =
+                userCompetitionRecordService.setCompetitionTimeWrapper(competitionId, userId);
         UserCompetitionRecord userCompetitionRecord = userCompetitionRecordService.getOne(userCompetitionRecordQueryWrapper);
         if (userCompetitionRecord == null) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "用户未报名比赛");
